@@ -9,3 +9,19 @@ c:\users\worldfavor2\documents\visual studio 2015\Projects\Billecta_Api_Requests
 c:\users\worldfavor2\documents\visual studio 2015\Projects\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Formatting.xml
 c:\users\worldfavor2\documents\visual studio 2015\Projects\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Newtonsoft.Json.xml
 c:\users\worldfavor2\documents\visual studio 2015\Projects\Billecta_Api_Requests\Billecta_Api_Requests\obj\Debug\Billecta_Api_Requests.csproj.Billecta_Api_Requests.exe.config
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Billecta_Api_Requests.exe.config
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\obj\Debug\Billecta_Api_Requests.exe
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\obj\Debug\Billecta_Api_Requests.pdb
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Billecta_Api_Requests.exe
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Billecta_Api_Requests.pdb
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Newtonsoft.Json.dll
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Formatting.dll
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\Newtonsoft.Json.xml
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Formatting.xml
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\obj\Debug\Billecta_Api_Requests.csprojResolveAssemblyReference.cache
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\JWT.dll
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Extensions.dll
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Primitives.dll
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Extensions.xml
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\bin\Debug\System.Net.Http.Primitives.xml
+C:\git_repo\Billecta\Billecta_Api_Requests\Billecta_Api_Requests\obj\Debug\Billecta_Api_Requests.csproj.App.config

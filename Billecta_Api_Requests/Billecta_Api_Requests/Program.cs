@@ -8,288 +8,197 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
+using static System.Console;
 // ReSharper disable InconsistentNaming
 
 namespace Billecta_Api_Requests
 {
-	class Program
+	public class Program
 	{
-		private static string clientId;
-		private static string clientSecret;
-		static readonly HttpClient client = new HttpClient();
-		private static byte[] byteArray;
+		static readonly HttpClient Client = new HttpClient();
 
-		static void Main(string[] args)
+		private static string BaseUrl;
+		public static string crediotPublicId;
+		public static string productPublicId;
+
+
+		public static void Main(string[] args)
 		{
 			var appSettings = ConfigurationManager.AppSettings;
-			clientId = appSettings["Billecta.ClientID"];
-			clientSecret = appSettings["Billecta.ClientSecret"];
-			byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+			var ClientId = appSettings["Billecta.ClientID"];
+			var ClientSecret = appSettings["Billecta.ClientSecret"];
+			var ByteArray = Encoding.ASCII.GetBytes(ClientId + ":" + ClientSecret);
+			Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(ByteArray));
+			BaseUrl = "https://apitest.billecta.com/v1/";
 
-			Get_AllCreditor().Wait();
+			crediotPublicId = "bfa37953-e5c3-4edd-b0f2-da0c235d07da"; // requesting to secure authentice response
+			productPublicId = "8c58cc36-2b80-4083-a733-bf069cf8fca1"; // from list of products choosen product 1
 
+			Create_Products().Wait();
 		}
 
 
 		public static async Task Get_Currencies()
 		{
-			//var appSettings = ConfigurationManager.AppSettings;
-			//clientId = appSettings["Billecta.ClientID"];
-			//clientSecret = appSettings["Billecta.ClientSecret"];
-			//byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			//client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-			HttpResponseMessage response = await client.GetAsync("https://apitest.billecta.com/v1/" + "currencies/currencies");
+			HttpResponseMessage response = await Client.GetAsync("https://apitest.billecta.com/v1/" + "currencies/currencies");
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
 
-			Console.WriteLine(responseBody);
-			Console.ReadLine();
+			WriteLine(responseBody);
+			ReadLine();
 		}
-
 
 
 		public static async Task Get_AllCreditor()
 		{
-			//var appSettings = ConfigurationManager.AppSettings;
-			//clientId = appSettings["Billecta.ClientID"];
-			//clientSecret = appSettings["Billecta.ClientSecret"];
-			//byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			//client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-			HttpResponseMessage response = await client.GetAsync("https://apitest.billecta.com/v1/" + "creditors/creditors");
+			HttpResponseMessage response = await Client.GetAsync("https://apitest.billecta.com/v1/" + "creditors/creditors");
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
-			JObject o = JObject.Parse(responseBody);
-			Console.WriteLine(o);
+			var creditors = (List<Creditor>)JsonConvert.DeserializeObject(responseBody, typeof(List<Creditor>));
 
-			var s = JsonConvert.DeserializeObject<CreditorPublicId>(responseBody);
+			var count = 0;
+			WriteLine("Retrieving list of all 'Creditors'....\n");
+			foreach (var creditor in creditors)
+			{
+				count++;
+				WriteLine("#" + count);
+				WriteLine("CreditorPublicId" + " : " + creditor.CreditorPublicId);
+				WriteLine("OrgNo" + " : " + creditor.OrgNo);
 
-			Console.ReadLine();
+				foreach (var pair in creditor.CreditorDetails)
+				{
+					WriteLine(pair.Key + " : " + pair.Value);
+				}
+				WriteLine("\n \n");
+			}
+
+			WriteLine("Finish !");
+			ReadLine();
 		}
 
 
 		public static async Task Get_Authentication_Claims()
 		{
-			var appSettings = ConfigurationManager.AppSettings;
-			clientId = appSettings["Billecta.ClientID"];
-			clientSecret = appSettings["Billecta.ClientSecret"];
-			byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-			HttpResponseMessage response = await client.GetAsync("https://apitest.billecta.com/v1/" + "authentication/apiauthenticate");
+			HttpResponseMessage response = await Client.GetAsync("https://apitest.billecta.com/v1/" + "authentication/apiauthenticate");
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
 
-			Console.WriteLine(responseBody);
-			Console.ReadLine();
+			WriteLine(responseBody);
+			ReadLine();
 		}
-
-
-		public static async Task Delete_Products()
-		{
-			var appSettings = ConfigurationManager.AppSettings;
-			clientId = appSettings["Billecta.ClientID"];
-			clientSecret = appSettings["Billecta.ClientSecret"];
-			byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-			HttpResponseMessage response = await client.DeleteAsync("https://apitest.billecta.com/v1/" + "products/products/2");
-			response.EnsureSuccessStatusCode();
-			var responseBody = await response.Content.ReadAsStringAsync();
-
-			Console.WriteLine(responseBody);
-			Console.ReadLine();
-		}
-
 
 
 		public static async Task Get_Product()
 		{
-			var appSettings = ConfigurationManager.AppSettings;
-			clientId = appSettings["Billecta.ClientID"];
-			clientSecret = appSettings["Billecta.ClientSecret"];
-			byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-			HttpResponseMessage response = await client.GetAsync("https://apitest.billecta.com/v1/" + "products/products/{id}?productid={productid}");
+			HttpResponseMessage response = await Client.GetAsync(BaseUrl + "products/products/" + crediotPublicId + "?productid=" + productPublicId);
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
+			var product = JsonConvert.DeserializeObject<Product>(responseBody);
 
-			Console.WriteLine(responseBody);
-			Console.ReadLine();
+			WriteLine("Retrieving a specific product....\n");
+			WriteLine("CreditorPublicId" + " : " + product.CreditorPublicId);
+			WriteLine("ProductExternalId" + " : " + product.ProductExternalId);
+			WriteLine("ProductPublicId:" + " : " + product.ProductPublicId);
+			foreach (var pair in product.ProductetailContainer)
+			{
+				WriteLine(pair.Key + " : " + pair.Value);
+			}
+			WriteLine("\nFinish !");
+			ReadLine();
 		}
 
 
+		public static async Task GetAll_Product()
+		{
+			HttpResponseMessage response = await Client.GetAsync(BaseUrl + "products/products/" + crediotPublicId);
+			response.EnsureSuccessStatusCode();
+			var responseBody = await response.Content.ReadAsStringAsync();
+			var products = (List<Product>)JsonConvert.DeserializeObject(responseBody, typeof(List<Product>));
 
+			var count = 0;
+
+			WriteLine("Retrieving list of all products....\n");
+
+			foreach (var product in products)
+			{
+				count++;
+				WriteLine("#" + count);
+				WriteLine("CreditorPublicId" + " : " + product.CreditorPublicId);
+				WriteLine("ProductExternalId" + " : " + product.ProductExternalId);
+				WriteLine("ProductPublicId:" + " : " + product.ProductPublicId);
+
+				foreach (var pair in product.ProductetailContainer)
+				{
+					WriteLine(pair.Key + " : " + pair.Value);
+				}
+
+				WriteLine("\n \n");
+			}
+
+			WriteLine("Finish !");
+			ReadLine();
+		}
+
+		//nt done
+		public static async Task UpdateProduct()
+		{
+			var data = new
+			{
+				CreditorPublicId = crediotPublicId,
+				ProductPublicId = productPublicId,
+				ProductExternalId = "2222"
+			};
+
+			HttpResponseMessage response = await Client.PutAsJsonAsync(BaseUrl + "products/products/", data);
+			response.EnsureSuccessStatusCode();
+			var responseBody = await response.Content.ReadAsStringAsync();
+			var product = JsonConvert.DeserializeObject<Product>(responseBody);
+
+
+		}
+
+
+		//public static async Task Delete_Products()
+		//{
+		//	//var appSettings = ConfigurationManager.AppSettings;
+		//	//ClientId = appSettings["Billecta.ClientID"];
+		//	//ClientSecret = appSettings["Billecta.ClientSecret"];
+		//	//ByteArray = Encoding.ASCII.GetBytes(ClientId + ":" + ClientSecret);
+		//	//Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(ByteArray));
+
+		//	HttpResponseMessage response = await Client.DeleteAsync("https://apitest.billecta.com/v1/" + "products/products/2");
+		//	response.EnsureSuccessStatusCode();
+		//	var responseBody = await response.Content.ReadAsStringAsync();
+
+		//	WriteLine(responseBody);
+		//	ReadLine();
+		//}
+
+
+		//OK
+
+		//nt done
 
 		public static async Task Create_Products()
 		{
-			var appSettings = ConfigurationManager.AppSettings;
-			clientId = appSettings["Billecta.ClientID"];
-			clientSecret = appSettings["Billecta.ClientSecret"];
-			byteArray = Encoding.ASCII.GetBytes(clientId + ":" + clientSecret);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
 			var data = new
 			{
-				root = new RootObject()
-				{
-					type = "proTy",
-					title = "ProRootTitle",
-					properties = new Properties()
-					{
-						CreditorPublicId = new CreditorPublicId()
-						{
-							type = "Creadior ID 1"
-						},
-						Description = new Description()
-						{
-							type = new List<string>() { "Test description 1", "Test des 2" }
-						},
-						ProductPublicId = new ProductPublicId()
-						{
-							type = "Product  ID 1"
-						},
-						UnitPrice = new UnitPrice()
-						{
-							type = "2500"
-						},
-						VAT = new VAT()
-						{
-							type = "3948938493893"
-						},
-						ProductType = new ProductType() { type = "pro type" },
-						Units = new Units() { type = new List<string>() { "1" } },
-						IsActive = new IsActive() { type = "yes" },
-						ProductExternalId = new ProductExternalId() { type = new List<string>() { "ex ID" } }
-
-					}
-				}
+				ProductPublicId = "847875384759384hf99",
+				CreditorPublicId = crediotPublicId,
+				Description = "some des",
+				IsActive = true,
+				UnitPrice = 33,
+				VAT = 25,
+				ProductTypeTypeView = 0
 			};
 
-			HttpResponseMessage response = await client.PostAsJsonAsync("https://apitest.billecta.com/v1/products/products", data);
+			HttpResponseMessage response = await Client.PostAsJsonAsync("https://apitest.billecta.com/v1/products/products", data);
 
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
 
-			Console.WriteLine(responseBody);
-			Console.ReadLine();
+			WriteLine(responseBody);
+			ReadLine();
 		}
-	}
-
-	public class Creditor
-	{
-		public string CreditorPublicId { get; set; }
-	}
-
-
-
-
-
-	public class ProductPublicId
-	{
-		public string type { get; set; }
-	}
-
-	public class CreditorPublicId
-	{
-		public string type { get; set; }
-	}
-
-	public class ArticleNumber
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class ProductExternalId
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class Description
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class Units
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class IsActive
-	{
-		public string type { get; set; }
-	}
-
-	public class UnitPrice
-	{
-		public string type { get; set; }
-	}
-
-	public class VAT
-	{
-		public string type { get; set; }
-	}
-
-	public class BookKeepingAccount
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class BookKeepingSalesEUAccount
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class BookKeepingSalesEUVATAccount
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class BookKeepingSalesNonEUAccount
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class BookKeepingPurchaseAccount
-	{
-		public List<string> type { get; set; }
-	}
-
-	public class ProductType
-	{
-		public string type { get; set; }
-		public List<int> @enum { get; set; }
-	}
-
-	public class Properties
-	{
-		public ProductPublicId ProductPublicId { get; set; }
-		public CreditorPublicId CreditorPublicId { get; set; }
-		public ArticleNumber ArticleNumber { get; set; }
-		public ProductExternalId ProductExternalId { get; set; }
-		public Description Description { get; set; }
-		public Units Units { get; set; }
-		public IsActive IsActive { get; set; }
-		public UnitPrice UnitPrice { get; set; }
-		public VAT VAT { get; set; }
-		public BookKeepingAccount BookKeepingAccount { get; set; }
-		public BookKeepingSalesEUAccount BookKeepingSalesEUAccount { get; set; }
-		public BookKeepingSalesEUVATAccount BookKeepingSalesEUVATAccount { get; set; }
-		public BookKeepingSalesNonEUAccount BookKeepingSalesNonEUAccount { get; set; }
-		public BookKeepingPurchaseAccount BookKeepingPurchaseAccount { get; set; }
-		public ProductType ProductType { get; set; }
-	}
-
-	public class RootObject
-	{
-		public string title { get; set; }
-		public string type { get; set; }
-		public Properties properties { get; set; }
 	}
 }
