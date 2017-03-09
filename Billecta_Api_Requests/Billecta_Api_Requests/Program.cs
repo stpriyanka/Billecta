@@ -177,27 +177,32 @@ namespace Billecta_Api_Requests
 
 		//OK
 
-		//nt done
-
 		public static async Task Create_Products()
 		{
 			var data = new
 			{
-				ProductPublicId = "847875384759384hf99",
 				CreditorPublicId = crediotPublicId,
-				Description = "some des",
+				Description = "ISO 26000",
 				IsActive = true,
 				UnitPrice = 33,
 				VAT = 25,
-				ProductTypeTypeView = 0
+				ProductTypeTypeView = 2,
+				ProductExternalId = "2222"
 			};
 
 			HttpResponseMessage response = await Client.PostAsJsonAsync("https://apitest.billecta.com/v1/products/products", data);
 
 			response.EnsureSuccessStatusCode();
 			var responseBody = await response.Content.ReadAsStringAsync();
+			var product = JsonConvert.DeserializeObject<Product>(responseBody);
 
-			WriteLine(responseBody);
+			WriteLine("ProductExternalId" + " : " + product.ProductExternalId);
+			WriteLine("ProductPublicId:" + " : " + product.ProductPublicId);
+			foreach (var pair in product.ProductetailContainer)
+			{
+				WriteLine(pair.Key + " : " + pair.Value);
+			}
+			WriteLine("\nFinish !");
 			ReadLine();
 		}
 	}
